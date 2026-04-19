@@ -4,8 +4,15 @@ import { geolocation } from "@vercel/functions";
 const BYPASS_KEY = "av2026";
 
 export function middleware(request: NextRequest) {
-  // Allow bypass with secret param: ?preview=av2026
+  // Allow bypass via query param — set cookie for subsequent requests
   if (request.nextUrl.searchParams.get("preview") === BYPASS_KEY) {
+    const response = NextResponse.next();
+    response.cookies.set("preview_bypass", "1", { maxAge: 86400 }); // 24 hours
+    return response;
+  }
+
+  // Allow if bypass cookie exists
+  if (request.cookies.get("preview_bypass")?.value === "1") {
     return NextResponse.next();
   }
 
