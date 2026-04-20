@@ -244,7 +244,6 @@ function MaskRevealName() {
           WebkitBackgroundClip: "text",
           WebkitTextFillColor: "transparent",
           animation: "stringsVibrate 0.3s ease-in-out infinite",
-          filter: "drop-shadow(0 0 60px rgba(99,102,241,0.15))",
         }}
         data-gsap="mask-text"
       >
