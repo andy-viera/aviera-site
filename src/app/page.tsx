@@ -258,7 +258,7 @@ function MaskRevealName() {
           width: "4px",
           height: "calc(100% + 80px)",
           background: "linear-gradient(180deg, transparent 0%, rgba(99,102,241,0.8) 15%, rgba(255,255,255,1) 50%, rgba(99,102,241,0.8) 85%, transparent 100%)",
-          boxShadow: "none",
+          boxShadow: "0 0 20px rgba(99,102,241,0.8), 0 0 60px rgba(99,102,241,0.4), 0 0 100px rgba(99,102,241,0.2)",
           opacity: 0,
           pointerEvents: "none",
         }}
