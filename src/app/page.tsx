@@ -354,8 +354,8 @@ function TypewriterText({
 /* --- Station: Home --- */
 function AgeCounter() {
   const [hovered, setHovered] = useState(false);
-  const [counter, setCounter] = useState("");
-  const birthDate = new Date(2005, 1, 23); // Feb 23, 2005
+  const [counter, setCounter] = useState({ y: 0, d: 0, h: "00", m: "00", s: "00" });
+  const birthDate = new Date(2005, 1, 23);
 
   useEffect(() => {
     if (!hovered) return;
@@ -365,10 +365,10 @@ function AgeCounter() {
       const years = Math.floor(diff / (365.25 * 24 * 60 * 60 * 1000));
       const remaining = diff - years * 365.25 * 24 * 60 * 60 * 1000;
       const days = Math.floor(remaining / (24 * 60 * 60 * 1000));
-      const hours = Math.floor((remaining % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
-      const minutes = Math.floor((remaining % (60 * 60 * 1000)) / (60 * 1000));
-      const seconds = Math.floor((remaining % (60 * 1000)) / 1000);
-      setCounter(`${years}y : ${days}d : ${String(hours).padStart(2, "0")}h : ${String(minutes).padStart(2, "0")}m : ${String(seconds).padStart(2, "0")}s`);
+      const hours = String(Math.floor((remaining % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000))).padStart(2, "0");
+      const minutes = String(Math.floor((remaining % (60 * 60 * 1000)) / (60 * 1000))).padStart(2, "0");
+      const seconds = String(Math.floor((remaining % (60 * 1000)) / 1000)).padStart(2, "0");
+      setCounter({ y: years, d: days, h: hours, m: minutes, s: seconds });
     };
     tick();
     const interval = setInterval(tick, 1000);
@@ -376,24 +376,87 @@ function AgeCounter() {
   }, [hovered]);
 
   return (
-    <p
-      data-gsap="hero-age"
+    <div
+      style={{ position: "relative", display: "inline-block" }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      style={{
-        fontFamily: "var(--font-mono), monospace",
-        color: hovered ? "rgba(129,140,248,0.7)" : "rgba(255,255,255,0.3)",
-        fontSize: hovered ? "12px" : "14px",
-        marginBottom: "6px",
-        opacity: 0,
-        transform: "translateY(12px)",
-        cursor: "default",
-        transition: "color 0.3s ease, font-size 0.3s ease",
-        letterSpacing: hovered ? "0.08em" : "normal",
-      }}
     >
-      {hovered ? counter : "a 21 yo"}
-    </p>
+      <p
+        data-gsap="hero-age"
+        style={{
+          fontFamily: "var(--font-mono), monospace",
+          color: "rgba(255,255,255,0.3)",
+          fontSize: "14px",
+          marginBottom: "6px",
+          opacity: 0,
+          transform: "translateY(12px)",
+          cursor: "default",
+        }}
+      >
+        a 21 yo
+      </p>
+
+      {hovered && (
+        <div style={{
+          position: "absolute",
+          top: "-80px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          clipPath: "polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px)",
+          background: "rgba(10,10,18,0.95)",
+          border: "1px solid rgba(129,140,248,0.25)",
+          padding: "10px 16px",
+          zIndex: 100,
+          pointerEvents: "none",
+        }}>
+          {/* Top label */}
+          <div style={{
+            fontFamily: "var(--font-mono), monospace",
+            fontSize: "7px",
+            letterSpacing: "0.2em",
+            color: "rgba(129,140,248,0.4)",
+            textAlign: "center",
+            marginBottom: "6px",
+          }}>
+            CREW MEMBER AGE
+          </div>
+          {/* Counter */}
+          <div style={{
+            fontFamily: "var(--font-mono), monospace",
+            fontSize: "13px",
+            color: "rgba(129,140,248,0.9)",
+            display: "flex",
+            gap: "4px",
+            alignItems: "baseline",
+            whiteSpace: "nowrap",
+          }}>
+            <span style={{ color: "rgba(255,255,255,0.9)", fontSize: "15px" }}>{counter.y}</span>
+            <span style={{ fontSize: "8px", color: "rgba(129,140,248,0.4)" }}>YRS</span>
+            <span style={{ color: "rgba(129,140,248,0.3)" }}>:</span>
+            <span style={{ color: "rgba(255,255,255,0.9)", fontSize: "15px" }}>{counter.d}</span>
+            <span style={{ fontSize: "8px", color: "rgba(129,140,248,0.4)" }}>DYS</span>
+            <span style={{ color: "rgba(129,140,248,0.3)" }}>:</span>
+            <span style={{ color: "rgba(255,255,255,0.7)" }}>{counter.h}</span>
+            <span style={{ fontSize: "8px", color: "rgba(129,140,248,0.4)" }}>HRS</span>
+            <span style={{ color: "rgba(129,140,248,0.3)" }}>:</span>
+            <span style={{ color: "rgba(255,255,255,0.7)" }}>{counter.m}</span>
+            <span style={{ fontSize: "8px", color: "rgba(129,140,248,0.4)" }}>MIN</span>
+            <span style={{ color: "rgba(129,140,248,0.3)" }}>:</span>
+            <span style={{ color: "rgba(255,255,255,0.5)" }}>{counter.s}</span>
+            <span style={{ fontSize: "8px", color: "rgba(129,140,248,0.4)" }}>SEC</span>
+          </div>
+          {/* Corner accents */}
+          <div style={{ position: "absolute", top: "4px", left: "8px", width: "10px", height: "1px", background: "rgba(129,140,248,0.4)" }} />
+          <div style={{ position: "absolute", top: "8px", left: "4px", width: "1px", height: "10px", background: "rgba(129,140,248,0.4)" }} />
+          <div style={{ position: "absolute", top: "4px", right: "8px", width: "10px", height: "1px", background: "rgba(129,140,248,0.4)" }} />
+          <div style={{ position: "absolute", top: "8px", right: "4px", width: "1px", height: "10px", background: "rgba(129,140,248,0.4)" }} />
+          <div style={{ position: "absolute", bottom: "4px", left: "8px", width: "10px", height: "1px", background: "rgba(129,140,248,0.4)" }} />
+          <div style={{ position: "absolute", bottom: "8px", left: "4px", width: "1px", height: "10px", background: "rgba(129,140,248,0.4)" }} />
+          <div style={{ position: "absolute", bottom: "4px", right: "8px", width: "10px", height: "1px", background: "rgba(129,140,248,0.4)" }} />
+          <div style={{ position: "absolute", bottom: "8px", right: "4px", width: "1px", height: "10px", background: "rgba(129,140,248,0.4)" }} />
+        </div>
+      )}
+    </div>
   );
 }
 
