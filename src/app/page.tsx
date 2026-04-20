@@ -352,6 +352,51 @@ function TypewriterText({
 }
 
 /* --- Station: Home --- */
+function AgeCounter() {
+  const [hovered, setHovered] = useState(false);
+  const [counter, setCounter] = useState("");
+  const birthDate = new Date(2005, 1, 23); // Feb 23, 2005
+
+  useEffect(() => {
+    if (!hovered) return;
+    const tick = () => {
+      const now = new Date();
+      const diff = now.getTime() - birthDate.getTime();
+      const years = Math.floor(diff / (365.25 * 24 * 60 * 60 * 1000));
+      const remaining = diff - years * 365.25 * 24 * 60 * 60 * 1000;
+      const days = Math.floor(remaining / (24 * 60 * 60 * 1000));
+      const hours = Math.floor((remaining % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+      const minutes = Math.floor((remaining % (60 * 60 * 1000)) / (60 * 1000));
+      const seconds = Math.floor((remaining % (60 * 1000)) / 1000);
+      setCounter(`${years}y : ${days}d : ${String(hours).padStart(2, "0")}h : ${String(minutes).padStart(2, "0")}m : ${String(seconds).padStart(2, "0")}s`);
+    };
+    tick();
+    const interval = setInterval(tick, 1000);
+    return () => clearInterval(interval);
+  }, [hovered]);
+
+  return (
+    <p
+      data-gsap="hero-age"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        fontFamily: "var(--font-mono), monospace",
+        color: hovered ? "rgba(129,140,248,0.7)" : "rgba(255,255,255,0.3)",
+        fontSize: hovered ? "12px" : "14px",
+        marginBottom: "6px",
+        opacity: 0,
+        transform: "translateY(12px)",
+        cursor: "default",
+        transition: "color 0.3s ease, font-size 0.3s ease",
+        letterSpacing: hovered ? "0.08em" : "normal",
+      }}
+    >
+      {hovered ? counter : "a 21 yo"}
+    </p>
+  );
+}
+
 function HomeStation() {
   const heroRef = useRef<HTMLDivElement>(null);
 
@@ -409,20 +454,8 @@ function HomeStation() {
         }}
       />
 
-      {/* Age */}
-      <p
-        data-gsap="hero-age"
-        style={{
-          fontFamily: "var(--font-mono), monospace",
-          color: "rgba(255,255,255,0.3)",
-          fontSize: "14px",
-          marginBottom: "6px",
-          opacity: 0,
-          transform: "translateY(12px)",
-        }}
-      >
-        a 21 yo
-      </p>
+      {/* Age with hover counter */}
+      <AgeCounter />
 
       {/* Typewriter cycling text */}
       <div
